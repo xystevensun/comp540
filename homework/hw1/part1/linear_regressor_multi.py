@@ -41,7 +41,7 @@ class LinearRegressor_Multi:
             # Update the parameters using the gradient and the learning rate.       #
             #   One line of code expected
             #########################################################################
-
+            self.theta -= learning_rate * grad
 
             #########################################################################
             #                       END OF YOUR CODE                                #
@@ -86,8 +86,7 @@ class LinearRegressor_Multi:
         # Implement this method. Store the predicted outputs in y_pred.           #
         #  One line of code expected                                              #
         ###########################################################################
-
-
+        y_pred = np.matmul(X, self.theta)
         ###########################################################################
         #                           END OF YOUR CODE                              #
         ###########################################################################
@@ -104,7 +103,8 @@ class LinearRegressor_Multi:
         #  One line of code expected                                              #
         ###########################################################################
 
-        theta_n = np.zeros((X.shape[1],))
+        # theta_n = np.zeros((X.shape[1],))
+        theta_n = np.matmul(np.matmul(np.linalg.inv(np.matmul(X.T, X)), X.T), y)
 
         ###########################################################################
 
@@ -130,9 +130,9 @@ class LinearReg_SquaredLoss(LinearRegressor_Multi):
         # Calculate J (loss) and grad (gradient) wrt to X,y, and self.theta.      #
         #  2-3 lines of code expected                                             #
         ###########################################################################
-
-
-
+        diff = np.sum(np.tile(np.array(self.theta).T, (num_examples,1)) * X, axis=1) - y
+        J = np.sum(np.square(diff)) / (2. * num_examples)
+        grad = np.matmul(diff, X) / num_examples
         ###########################################################################
         #                           END OF YOUR CODE                              #
         ###########################################################################

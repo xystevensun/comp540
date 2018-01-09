@@ -42,7 +42,7 @@ class LinearRegressor:
             # Update the parameters using the gradient and the learning rate.       #
             #    One line of code expected                                          #
             #########################################################################
-
+            self.theta -= learning_rate * grad
 
 
             #########################################################################
@@ -88,7 +88,7 @@ class LinearRegressor:
         # Implement this method. Store the predicted outputs in y_pred.           #
         #    One line of code expected                                            #
         ###########################################################################
-
+        y_pred = np.matmul(X, self.theta)
 
         ###########################################################################
         #                           END OF YOUR CODE                              #
@@ -115,8 +115,9 @@ class LinearReg_SquaredLoss(LinearRegressor):
         # Calculate J (loss) and grad (gradient) wrt to X,y, and self.theta.      #
         #   2-4 lines of code expected                                            #
         ###########################################################################
-
-
+        diff = np.sum(np.tile(np.array(self.theta).T, (X.shape[0],1)) * X, axis=1) - y
+        J = np.sum(np.square(diff)) / (2. * X.shape[0])
+        grad = np.matmul(diff, X) / (X.shape[0])
         ###########################################################################
         #                           END OF YOUR CODE                              #
         ###########################################################################
