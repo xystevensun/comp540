@@ -42,7 +42,6 @@ class LinearRegressor_Multi:
             #   One line of code expected
             #########################################################################
             self.theta -= learning_rate * grad
-
             #########################################################################
             #                       END OF YOUR CODE                                #
             #########################################################################
@@ -102,10 +101,8 @@ class LinearRegressor_Multi:
         # Solve for theta_n using the normal equation.                            #
         #  One line of code expected                                              #
         ###########################################################################
-
         # theta_n = np.zeros((X.shape[1],))
         theta_n = np.matmul(np.matmul(np.linalg.inv(np.matmul(X.T, X)), X.T), y)
-
         ###########################################################################
 
         return theta_n
