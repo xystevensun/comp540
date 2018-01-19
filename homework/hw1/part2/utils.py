@@ -86,6 +86,7 @@ def learning_curve(X,y,Xval,yval,reg):
 def validation_curve(X,y,Xval,yval):
   
   reg_vec = [0, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1, 3, 10]
+  # reg_vec = [0, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30, 100, 300, 1000]
   error_train = np.zeros((len(reg_vec),))
   error_val = np.zeros((len(reg_vec),))
 
@@ -95,7 +96,7 @@ def validation_curve(X,y,Xval,yval):
     ###########################################################################
   for idx in range(len(reg_vec)):
     reglinear_reg = RegularizedLinearReg_SquaredLoss()
-    theta = reglinear_reg.train(X,y,reg=reg_vec[idx],num_iters=1000)
+    theta = reglinear_reg.train(X,y,reg=reg_vec[idx],num_iters=10000)
     error_train[idx] = reglinear_reg.loss(theta,X,y,0.0)
     error_val[idx] = reglinear_reg.loss(theta,Xval,yval,0.0)
   return reg_vec, error_train, error_val
