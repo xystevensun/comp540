@@ -52,7 +52,7 @@ class MultiVariateNormal(ProbabilityModel):
     def sample(self):
         Z = [];
         # Cholesky decomposition
-        A = numpy.linglg.cholesky(self.Sigma);
+        A = numpy.linalg.cholesky(self.Sigma);
         for i in range(0, self.Mu.size):
             Z.append(UnivariateNormal(0, 1).sample());
         Z = numpy.array(Z);
