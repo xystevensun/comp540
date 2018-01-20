@@ -104,9 +104,8 @@ class RegularizedLinearRegressor_Multi:
         # Solve for theta_n using the normal equation.                            #
         #  One line of code expected                                              #
         ###########################################################################
-
-        theta_n = np.zeros((X.shape[1],))
-
+        # theta_n = np.zeros((X.shape[1],))
+        theta_n = np.matmul(np.matmul(np.linalg.inv(np.matmul(X.T, X)), X.T), y)
         ###########################################################################
         return theta_n
 
@@ -150,7 +149,7 @@ class RegularizedLinearReg_SquaredLoss(RegularizedLinearRegressor_Multi):
         #  3 lines of code expected                                               #
         ###########################################################################
         diff = np.sum(np.tile(np.array(theta).T, (num_examples,1)) * X, axis=1) - y
-        grad = (np.matmul(diff, X) + reg*(np.hstack([0, theta[1:]]).T))/num_examples # 
+        grad = (np.matmul(diff, X) + reg*(np.hstack([0, theta[1:]])))/num_examples # 
         ###########################################################################
         #                           END OF YOUR CODE                              #
         ###########################################################################
