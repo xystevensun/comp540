@@ -14,7 +14,7 @@ import scipy.io
 def sigmoid (z):
     sig = np.zeros(z.shape)
     # Your code here
-    
+    sig = 1 / (1 + np.exp(-z))
     # End your code
 
     return sig
