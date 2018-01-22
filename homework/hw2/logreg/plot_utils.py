@@ -112,11 +112,11 @@ from sklearn.svm import l1_min_c
 # From
 # http://scikit-learn.org/stable/auto_examples/linear_model/plot_logistic_path.html#example-linear-model-plot-logistic-path-py
 
-def plot_regularization_path(X,y):
+def plot_regularization_path(X,y, pen='l1'):
     plt.figure()
     cs = sklearn.svm.l1_min_c(X, y, loss='log') * np.logspace(0, 3)
     print("Computing regularization path ...")
-    clf = linear_model.LogisticRegression(C=1.0, penalty='l1', tol=1e-6)
+    clf = linear_model.LogisticRegression(C=1.0, penalty=pen, tol=1e-6)
     coefs_ = []
     for c in cs:
         clf.set_params(C=c)
