@@ -208,7 +208,7 @@ class RegLogisticRegressor:
         # TODO: 1-2 lines of code expected                                       #
         ##########################################################################
         hx = utils.sigmoid(np.dot(X,theta))
-        J = np.mean(np.multiply(-y, np.log(hx)) - np.multiply(1-y, np.log(1-hx))) + reg / 2.0 / m * (np.sum(theta[1:]))
+        J = np.mean(np.multiply(-y, np.log(hx)) - np.multiply(1-y, np.log(1-hx))) + reg / 2.0 / m * (np.sum(np.square(theta[1:])))
         ###########################################################################
         #                           END OF YOUR CODE                              #
         ###########################################################################
