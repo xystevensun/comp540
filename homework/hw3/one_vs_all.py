@@ -31,8 +31,11 @@ class one_vs_allLogisticRegressor:
         # Compute the K logistic regression classifiers                           #
         # TODO: 7-9 lines of code expected                                        #
         ###########################################################################
-
-
+        for k in range(0, len(self.labels)):
+            y_ = (y==k).astype(int)# create y
+            sk_logreg_l2 = linear_model.LogisticRegression(C=1.0/reg,solver='lbfgs',fit_intercept=False, penalty='l2')
+            sk_logreg_l2.fit(X,y_)# train the model
+            theta_opt[:,k] = sk_logreg_l2.coef_[0]
         ###########################################################################
         #                           END OF YOUR CODE                              #
         ###########################################################################
@@ -57,7 +60,10 @@ class one_vs_allLogisticRegressor:
         # Compute the predicted outputs for X                                     #
         # TODO: 1-2 lines of code expected                                        #
         ###########################################################################
-
+        print X.shape
+        print self.theta.shape
+        print np.dot(X, self.theta).shape
+        y_pred = np.argmax(np.dot(X, self.theta), axis=1)
 
         ###########################################################################
         #                           END OF YOUR CODE                              #
