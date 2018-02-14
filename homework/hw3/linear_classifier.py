@@ -49,9 +49,9 @@ class LinearClassifier:
       # replacement is faster than sampling without replacement.              #
       # About 3 lines of code expected                                        #
       #########################################################################
-
-
-
+      idx = np.random.choice(num_train, batch_size, replace=True)
+      X_batch = X[idx]
+      y_batch = y[idx]
       #########################################################################
       #                       END OF YOUR CODE                                #
       #########################################################################
@@ -66,7 +66,7 @@ class LinearClassifier:
       # Update the weights using the gradient and the learning rate.          #
       # Hint: one line of code expected                                       #
       #########################################################################
-      
+      self.theta -= learning_rate*grad
 
       #########################################################################
       #                       END OF YOUR CODE                                #
@@ -97,8 +97,10 @@ class LinearClassifier:
     # Implement this method. Store the predicted labels in y_pred.            #
     # 1-2 lines of code expected.                                             #
     ###########################################################################
-
-
+    dp = np.dot(X,self.theta)
+    dp = np.exp(dp-np.max(dp, axis=1).reshape((-1,1)))
+    logdp = dp/np.sum(dp, axis=1).reshape((-1,1))
+    y_pred = np.argmax(logdp, axis=1)
     ###########################################################################
     #                           END OF YOUR CODE                              #
     ###########################################################################

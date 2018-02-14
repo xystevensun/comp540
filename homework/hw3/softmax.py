@@ -27,8 +27,23 @@ def softmax_loss_naive(theta, X, y, reg):
   # careful here, it is easy to run into numeric instability. Don't forget    #
   # the regularization term!                                                  #
   #############################################################################
+  dp = np.dot(X,theta)
+  dp = np.exp(dp-np.max(dp, axis=1).reshape((-1,1)))
+  logdp = dp/np.sum(dp, axis=1).reshape((-1,1))
+  for m_ in range(m):
+    for k_ in range(theta.shape[1]):
+      if y[m_] == k_:
+        J += np.log(logdp[m_,k_])
+  J = -J/m
+  for d_ in range(dim):
+    for k_ in range(theta.shape[1]):
+      J += reg/2/m*theta[d_,k_]*theta[d_,k_]
 
-
+  for k_ in range(theta.shape[1]):
+    for m_ in range(m):
+      grad[:, k_] += X[m_,:]*((1 if y[m_]==k_ else 0)-logdp[m_,k_])
+    grad[:,k_] /= (-m)
+    grad[:,k_] += reg/m*theta[:,k_]
   #############################################################################
   #                          END OF YOUR CODE                                 #
   #############################################################################
@@ -53,8 +68,13 @@ def softmax_loss_vectorized(theta, X, y, reg):
   # here, it is easy to run into numeric instability. Don't forget the        #
   # regularization term!                                                      #
   #############################################################################
-
-
+  dp = np.dot(X,theta)
+  dp = np.exp(dp-np.max(dp, axis=1).reshape((-1,1)))
+  logdp = dp/np.sum(dp, axis=1).reshape((-1,1))
+  indicator = np.zeros((m,theta.shape[1]))
+  indicator[range(0,m), y] = 1
+  J = -np.sum(np.sum(np.multiply(indicator, np.log(logdp))))/m + reg/2.0/m*np.sum(np.sum(np.square(theta)))
+  grad = -np.matmul(X.T, (indicator-logdp))/m + reg/m*theta    
   #############################################################################
   #                          END OF YOUR CODE                                 #
   #############################################################################
