@@ -111,7 +111,7 @@ class LinearSVM(LinearClassifier):
   def loss(self, X, y, reg):
     return svm_loss_vectorized(self.theta, X, y, reg)
 
-  def predict(sellf,X):
+  def predict(self,X):
     y_pred = np.zeros(X.shape[0])
 
     ##################################################################
@@ -119,7 +119,7 @@ class LinearSVM(LinearClassifier):
     #   return y_pred with class associated with each row of X       #
     #   1-2 lines of code expected                                   #
     ##################################################################
-
+    
 
     ##################################################################
     #   END OF YOUR CODE                                             #

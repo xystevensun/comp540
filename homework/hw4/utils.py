@@ -7,7 +7,8 @@ from sklearn import preprocessing
 #### Implement the Gaussian kernel here ####
 
 def gaussian_kernel(x1,x2,sigma):
-    return 0.
+    return np.exp(-np.sum(np.square(x1-x2))/2/sigma/sigma)
+    # return 0.
 
 #### End of your code ####
 
