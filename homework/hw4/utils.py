@@ -14,7 +14,15 @@ def gaussian_kernel(x1,x2,sigma):
 
 # load a mat file
 
+def hamming_distance_kernel(x1,x2):
+    return np.sum(x1!=x2)/x1.shape[0]
     
+def plot_data(X,y,xlabel,ylabel):
+    fig = plt.figure()
+    plt.plot(X,y,'bo')
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+        
 def load_mat(fname):
     data = scipy.io.loadmat(fname)
     X = data['X']
@@ -43,6 +51,7 @@ def plot_twoclass_data(X,y,xlabel,ylabel,legend):
     plt.ylabel(ylabel)
     plt.legend(loc="upper right")
     return ax
+
 
 def plot_decision_boundary_sklearn(X,y,clf,  xlabel, ylabel, legend):
 

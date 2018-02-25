@@ -119,8 +119,7 @@ class LinearSVM(LinearClassifier):
     #   return y_pred with class associated with each row of X       #
     #   1-2 lines of code expected                                   #
     ##################################################################
-    
-
+    y_pred = np.argmax(np.matmul(X, self.theta), axis=1)
     ##################################################################
     #   END OF YOUR CODE                                             #
     ##################################################################

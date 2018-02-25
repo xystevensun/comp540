@@ -79,9 +79,20 @@ def svm_loss_naive(theta, X, y, reg):
   # code above to compute the gradient.                                       #
   # 8-10 lines of code expected                                               #
   #############################################################################
-
-
-
+  # print X.shape #(49000, 3073)
+  # print y.shape #(49000,)
+  # print theta.shape #(3073, 10)
+  for mm in range(m):
+    p2 = np.dot(theta[:,y[mm]], X[mm,:])
+    for yy in range(K):
+      if yy != y[mm]:
+        m2 = np.dot(theta[:,yy], X[mm,:])-p2+delta
+        J += (max(0, m2))
+        if m2 > 0:
+          dtheta[:,yy] += X[mm,:]
+          dtheta[:,y[mm]] -= X[mm,:]
+  J = np.sum(np.square(theta))/2/m + J*reg/m
+  dtheta = theta/m + dtheta*reg/m
   #############################################################################
   # TODO:                                                                     #
   # Compute the gradient of the loss function and store it dtheta.            #
@@ -111,9 +122,13 @@ def svm_loss_vectorized(theta, X, y, reg):
   # result in variable J.                                                     #
   # 8-10 lines of code                                                        #
   #############################################################################
-  
-
-
+  K = theta.shape[1] # number of classes
+  m = X.shape[0]     # number of examples
+  thetaX = np.matmul(X, theta)
+  thetaXthetaX = thetaX - thetaX[range(len(y)),y].reshape((-1,1))
+  thetaXthetaX[thetaXthetaX!=0] += delta
+  l = np.maximum(0, thetaXthetaX)
+  J = np.sum(np.square(theta))/2/m + np.sum(l)*reg/m
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
@@ -128,7 +143,9 @@ def svm_loss_vectorized(theta, X, y, reg):
   # to reuse some of the intermediate values that you used to compute the     #
   # loss.                                                                     #
   #############################################################################
-
+  co = (thetaXthetaX>0).astype(int)
+  co[range(len(y)),y] = -(np.sum(co, axis=1))  
+  dtheta = theta/m + np.matmul(X.T, co)*reg/m
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
