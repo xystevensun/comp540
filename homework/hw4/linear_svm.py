@@ -91,8 +91,8 @@ def svm_loss_naive(theta, X, y, reg):
         if m2 > 0:
           dtheta[:,yy] += X[mm,:]
           dtheta[:,y[mm]] -= X[mm,:]
-  J = np.sum(np.square(theta))/2/m + J*reg/m
-  dtheta = theta/m + dtheta*reg/m
+  J = np.sum(np.square(theta))/2/m*reg + J/m
+  dtheta = theta/m*reg + dtheta/m
   #############################################################################
   # TODO:                                                                     #
   # Compute the gradient of the loss function and store it dtheta.            #
@@ -128,7 +128,7 @@ def svm_loss_vectorized(theta, X, y, reg):
   thetaXthetaX = thetaX - thetaX[range(len(y)),y].reshape((-1,1))
   thetaXthetaX[thetaXthetaX!=0] += delta
   l = np.maximum(0, thetaXthetaX)
-  J = np.sum(np.square(theta))/2/m + np.sum(l)*reg/m
+  J = np.sum(np.square(theta))/2/m*reg + np.sum(l)/m
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
@@ -145,7 +145,7 @@ def svm_loss_vectorized(theta, X, y, reg):
   #############################################################################
   co = (thetaXthetaX>0).astype(int)
   co[range(len(y)),y] = -(np.sum(co, axis=1))  
-  dtheta = theta/m + np.matmul(X.T, co)*reg/m
+  dtheta = theta/m*reg + np.matmul(X.T, co)/m
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
