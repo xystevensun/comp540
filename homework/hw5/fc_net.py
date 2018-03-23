@@ -46,7 +46,10 @@ class TwoLayerNet(object):
     # layer weights and biases using the keys 'theta2' and 'theta2_0.          #
     ############################################################################
     # 4 lines of code expected
-
+    self.params['theta1'] = np.random.normal(loc=0.0, scale=weight_scale, size=(input_dim, hidden_dim))
+    self.params['theta1_0'] = np.zeros((input_dim, ))
+    self.params['theta2'] = np.random.normal(loc=0.0, scale=weight_scale, size=(hidden_dim, num_classes))
+    self.params['theta2_0'] = np.zeros((hidden_dim, ))
     pass
     ############################################################################
     #                             END OF YOUR CODE                             #
@@ -79,8 +82,9 @@ class TwoLayerNet(object):
     ############################################################################
     # Hint: unpack the weight parameters from self.params
     # 3 lines of code expected
-
-
+    out1, cache1 = affine_relu_forward(X, self.params['theta1'], self.params['theta1_0'])
+    out2, cache2 = affine_forward(out1, self.params['theta2'], self.params['theta2_0'])
+    scores = out2
     pass
     ############################################################################
     #                             END OF YOUR CODE                             #
@@ -102,7 +106,14 @@ class TwoLayerNet(object):
     # of 0.5 to simplify the expression for the gradient.                      #
     ############################################################################
     # 4-8 lines of code expected
-
+    loss, dx = softmax_loss(out2, y)
+    loss += self.reg * (np.sum(self.params['theta1']**2) + np.sum(self.params['theta2']**2))/2
+    dx, dtheta, dtheta0 = affine_backward(dx, cache2)
+    grads['theta2'] = dtheta + self.reg * self.params['theta2']
+    grads['theta2_0'] = dtheta0
+    dx, dtheta, dtheta0 = affine_relu_backward(dx, cache1)
+    grads['theta1'] = dtheta + self.reg * self.params['theta1']
+    grads['theta1_0'] = dtheta0
     pass
     ############################################################################
     #                             END OF YOUR CODE                             #
