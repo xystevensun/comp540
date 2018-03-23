@@ -25,8 +25,8 @@ def affine_forward(x, theta, theta0):
   # will need to reshape the input into rows.                                 #
   #############################################################################
   # 2 lines of code expected
-
-  pass
+  x_re = x.reshape(x.shape[0], np.prod(x.shape[1:]))
+  out = np.matmul(x_re, theta) + np.expand_dims(theta0, axis=1).T
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
@@ -57,9 +57,16 @@ def affine_backward(dout, cache):
   #############################################################################
   # Hint: do not forget to reshape x into (m,d) form
   # 4-5 lines of code expected
-
-
-  pass
+  # print x.shape
+  # print theta.shape
+  # print theta0.shape
+  # print dout.shape
+  x_re = x.reshape(x.shape[0], np.prod(x.shape[1:]))
+  dx = np.matmul(dout, theta.T).reshape(x.shape)
+  dtheta = np.matmul(x_re.T, dout)
+  dtheta0 = np.sum(dout, axis=0)
+  # print dx.shape
+  # print dtheta.shape
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
@@ -82,7 +89,7 @@ def relu_forward(x):
   # TODO: Implement the ReLU forward pass.                                    #
   #############################################################################
   # 1 line of code expected
-
+  out = np.maximum(x, 0)
   pass
   #############################################################################
   #                             END OF YOUR CODE                              #
@@ -107,7 +114,7 @@ def relu_backward(dout, cache):
   # TODO: Implement the ReLU backward pass.                                   #
   #############################################################################
   # 1 line of code expected. Hint: use np.where
-
+  dx = np.where(x>0.0, dout, 0.0)
   pass
   #############################################################################
   #                             END OF YOUR CODE                              #
