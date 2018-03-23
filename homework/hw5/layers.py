@@ -26,12 +26,6 @@ def affine_forward(x, theta, theta0):
   #############################################################################
   # 2 lines of code expected
   x_re = x.reshape(x.shape[0], np.prod(x.shape[1:]))
-  # print "check the dimensions"
-  # print x_re.shape
-  # print theta.shape
-  # print theta0.shape
-  # print (np.matmul(x_re, theta)).shape
-  # print "finished check the dimensions"
   out = np.matmul(x_re, theta) + np.expand_dims(theta0, axis=1).T
   #############################################################################
   #                             END OF YOUR CODE                              #
@@ -160,7 +154,8 @@ def dropout_forward(x, dropout_param):
     # Store the dropout mask in the mask variable.                            #
     ###########################################################################
     # 2 lines of code expected
-
+    mask = (np.random.rand(*x.shape)<(1.0*p))/(1.0*p)
+    out = x*mask
     pass
     ###########################################################################
     #                            END OF YOUR CODE                             #
@@ -170,7 +165,7 @@ def dropout_forward(x, dropout_param):
     # TODO: Implement the test phase forward pass for inverted dropout.       #
     ###########################################################################
     # 1 line of code expected
-
+    out = x
     pass
     ###########################################################################
     #                            END OF YOUR CODE                             #
@@ -199,7 +194,7 @@ def dropout_backward(dout, cache):
     # TODO: Implement the training phase backward pass for inverted dropout.  #
     ###########################################################################
     # 1 line of code expected
-
+    dx = dout * mask
     pass
     ###########################################################################
     #                            END OF YOUR CODE                             #
