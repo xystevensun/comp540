@@ -26,6 +26,12 @@ def affine_forward(x, theta, theta0):
   #############################################################################
   # 2 lines of code expected
   x_re = x.reshape(x.shape[0], np.prod(x.shape[1:]))
+  # print "check the dimensions"
+  # print x_re.shape
+  # print theta.shape
+  # print theta0.shape
+  # print (np.matmul(x_re, theta)).shape
+  # print "finished check the dimensions"
   out = np.matmul(x_re, theta) + np.expand_dims(theta0, axis=1).T
   #############################################################################
   #                             END OF YOUR CODE                              #

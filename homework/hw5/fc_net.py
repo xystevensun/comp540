@@ -47,9 +47,9 @@ class TwoLayerNet(object):
     ############################################################################
     # 4 lines of code expected
     self.params['theta1'] = np.random.normal(loc=0.0, scale=weight_scale, size=(input_dim, hidden_dim))
-    self.params['theta1_0'] = np.zeros((input_dim, ))
+    self.params['theta1_0'] = np.zeros((hidden_dim, ))
     self.params['theta2'] = np.random.normal(loc=0.0, scale=weight_scale, size=(hidden_dim, num_classes))
-    self.params['theta2_0'] = np.zeros((hidden_dim, ))
+    self.params['theta2_0'] = np.zeros((num_classes, ))
     pass
     ############################################################################
     #                             END OF YOUR CODE                             #
@@ -175,8 +175,11 @@ class FullyConnectedNet(object):
     #                                                                          #
     ############################################################################
     # about 4 lines of code
-
-
+    for layer in range(1, self.num_layers):
+      d1 = input_dim if (layer == 1) else hidden_dims[layer-2]
+      d2 = num_classes if (layer == (self.num_layers-1)) else hidden_dims[layer-1]
+      self.params['theta%d' % layer] = np.random.normal(loc=0.0, scale=weight_scale, size=(d1, d2)).astype(dtype)
+      self.params['theta%d_0' % layer] = np.zeros((d2, ), dtype=dtype)
     ############################################################################
     #                             END OF YOUR CODE                             #
     ############################################################################
@@ -220,7 +223,14 @@ class FullyConnectedNet(object):
     # dropout forward pass.                                                    #
     #                                                                          #
     ############################################################################
-
+    outs = {}
+    caches = {}
+    for layer in range(1, self.num_layers):
+      if layer == (self.num_layers-1):
+        outs['theta%d' % (layer, )], caches['theta%d' % (layer, )] = affine_forward(outs['theta%d' % (layer-1, )], self.params['theta%d' % (layer, )], self.params['theta%d_0' % (layer, )])
+      else:
+        outs['theta%d' % (layer, )], caches['theta%d' % (layer, )] = affine_relu_forward(X if (layer == 1) else outs['theta%d' % (layer-1, )], self.params['theta%d' % (layer, )], self.params['theta%d_0' % (layer, )]) 
+    scores = outs['theta%d' % (self.num_layers-1, )]
     pass
     ############################################################################
     #                             END OF YOUR CODE                             #
@@ -242,8 +252,14 @@ class FullyConnectedNet(object):
     # automated tests, make sure that your L2 regularization includes a factor #
     # of 0.5 to simplify the expression for the gradient.                      #
     ############################################################################
+    loss, dx = softmax_loss(scores, y)
+    reg_term = sum([np.sum(v**2) for k, v in self.params.iteritems()])
+    loss += self.reg * reg_term/2
 
-
+    for layer in range(self.num_layers-1, 0, -1):
+      dx, dtheta, dtheta0 = affine_backward(dx, caches['theta%d' % (layer,)]) if layer == self.num_layers-1 else affine_relu_backward(dx, caches['theta%d' % (layer,)])
+      grads['theta%d' % (layer,)] = dtheta + self.reg * self.params['theta%d' % (layer,)]
+      grads['theta%d_0' % (layer,)] = dtheta0
     pass
     ############################################################################
     #                             END OF YOUR CODE                             #
