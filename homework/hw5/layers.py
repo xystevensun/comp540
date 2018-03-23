@@ -154,8 +154,9 @@ def dropout_forward(x, dropout_param):
     # Store the dropout mask in the mask variable.                            #
     ###########################################################################
     # 2 lines of code expected
-    mask = (np.random.rand(*x.shape)<(1.0*p))/(1.0*p)
-    out = x*mask
+    drop = 1 - p
+    mask = (np.random.rand(*x.shape)<drop)/drop
+    out = x * mask
     pass
     ###########################################################################
     #                            END OF YOUR CODE                             #

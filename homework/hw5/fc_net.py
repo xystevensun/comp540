@@ -229,12 +229,11 @@ class FullyConnectedNet(object):
       if layer == (self.num_layers-1):
         outs['theta%d' % (layer, )], caches['theta%d' % (layer, )] = affine_forward(outs[('dropout%d' if self.use_dropout else 'theta%d') % (layer-1, )], self.params['theta%d' % (layer, )], self.params['theta%d_0' % (layer, )])
       else:
-        outs['theta%d' % (layer, )], caches['theta%d' % (layer, )] = affine_relu_forward(X if (layer == 1) else (outs[('dropout%d' if self.use_dropout else 'theta%d') % (layer-1, )]), self.params['theta%d' % (layer, )], self.params['theta%d_0' % (layer, )])         
+        outs['theta%d' % (layer, )], caches['theta%d' % (layer, )] = affine_relu_forward(X if (layer == 1) else (outs[('dropout%d' if self.use_dropout else 'theta%d') % (layer-1, )]), self.params['theta%d' % (layer, )], self.params['theta%d_0' % (layer, )])
+        if self.use_dropout:
+          outs['dropout%d' % (layer, )], caches['dropout%d' % (layer, )] = dropout_forward(outs['theta%d' % (layer, )], self.dropout_param)
 
-      if self.use_dropout:
-        outs['dropout%d' % (layer, )], caches['dropout%d' % (layer, )] = dropout_forward(outs['theta%d' % (layer, )], self.dropout_param)
-
-    scores = outs[('dropout%d' if self.use_dropout else 'theta%d') % (self.num_layers-1, )]
+    scores = outs['theta%d' % (self.num_layers-1, )]
     pass
     ############################################################################
     #                             END OF YOUR CODE                             #
@@ -261,7 +260,8 @@ class FullyConnectedNet(object):
     loss += self.reg * reg_term/2
 
     for layer in range(self.num_layers-1, 0, -1):
-      if self.use_dropout:
+      # print layer, self.num_layers-1
+      if self.use_dropout and layer != self.num_layers-1:
         dx = dropout_backward(dx, caches['dropout%d' % (layer,)])
       dx, dtheta, dtheta0 = affine_backward(dx, caches['theta%d' % (layer,)]) if layer == self.num_layers-1 else affine_relu_backward(dx, caches['theta%d' % (layer,)])
       grads['theta%d' % (layer,)] = dtheta + self.reg * self.params['theta%d' % (layer,)]
