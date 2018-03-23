@@ -260,7 +260,6 @@ class FullyConnectedNet(object):
     loss += self.reg * reg_term/2
 
     for layer in range(self.num_layers-1, 0, -1):
-      # print layer, self.num_layers-1
       if self.use_dropout and layer != self.num_layers-1:
         dx = dropout_backward(dx, caches['dropout%d' % (layer,)])
       dx, dtheta, dtheta0 = affine_backward(dx, caches['theta%d' % (layer,)]) if layer == self.num_layers-1 else affine_relu_backward(dx, caches['theta%d' % (layer,)])
