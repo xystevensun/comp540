@@ -233,10 +233,6 @@ def conv_forward_naive(x, theta, theta0, conv_param):
   # TODO: Implement the convolutional forward pass.                           #
   # Hint: you can use the function np.pad for padding.                        #
   #############################################################################
-  # print x.shape
-  # print theta.shape
-  # print theta0.shape
-  # print conv_param
   m, C, H, W = x.shape
   F, _, HH, WW = theta.shape
   pad = conv_param['pad']
@@ -244,19 +240,13 @@ def conv_forward_naive(x, theta, theta0, conv_param):
 
   npad = ((0,0),(0,0),(pad,pad),(pad,pad))
   x_pad = np.pad(x, npad, 'constant', constant_values=0)
-  # print x_pad.shape
   out = np.zeros((m, F, 1 + (H + 2 * pad - HH) / stride, 1 + (W + 2 * pad - WW) / stride))
-  # print out.shape
 
   for mm in range(m):
     for FF in range(F):
       for HHH in range(1 + (H + 2 * pad - HH) / stride):
         for WWW in range(1 + (W + 2 * pad - WW) / stride):
-          # print x_pad[mm, :, HHH*stride:HHH*stride+HH, WWW*stride:WWW*stride+WW].shape
-          # print theta[FF].shape
           out[mm,FF,HHH,WWW] = np.sum(x_pad[mm, :, HHH*stride:HHH*stride+HH, WWW*stride:WWW*stride+WW] * theta[FF])+theta0[FF]
-          # out[mm,FF,HHH,WWW] = np.dot(X, theta[FF]) + theta0[FF]
-  # np.pad()
   pass
   #############################################################################
   #                             END OF YOUR CODE                              #
@@ -282,8 +272,43 @@ def conv_backward_naive(dout, cache):
   #############################################################################
   # TODO: Implement the convolutional backward pass.                          #
   #############################################################################
+  x, theta, theta0, conv_param = cache
+  # print 'x', x.shape
+  # print 'theta', theta.shape
+  # print 'theta0', theta0.shape
+  # print conv_param
 
+  m, C, H, W = x.shape
+  F, _, HH, WW = theta.shape
+  pad = conv_param['pad']
+  stride = conv_param['stride']
+
+  npad = ((0,0),(0,0),(pad,pad),(pad,pad))
+  x_pad = np.pad(x, npad, 'constant', constant_values=0)
+  out = np.zeros((m, F, 1 + (H + 2 * pad - HH) / stride, 1 + (W + 2 * pad - WW) / stride))
+  # print dout.shape
+  # print out.shape  
+
+  dx = np.zeros(x_pad.shape)
+  dtheta = np.zeros(theta.shape)
+  dtheta0 = np.sum(np.sum(np.sum(dout, axis=3), axis=2), axis=0)
+
+  for mm in range(m):
+    for FF in range(F):
+      for HHH in range(1 + (H + 2 * pad - HH) / stride):
+        for WWW in range(1 + (W + 2 * pad - WW) / stride):
+          # print '==================='
+          # print dx[mm,:,HHH*stride:HHH*stride+HH, WWW*stride:WWW*stride+WW].shape
+          # print theta[FF].shape
+          dx[mm,:,HHH*stride:HHH*stride+HH, WWW*stride:WWW*stride+WW] += dout[mm,FF,HHH,WWW]*theta[FF]
+          # print '==================='
+          # print dtheta[FF,:,:,:].shape
+          # print x_pad[mm, :, HHH*stride:HHH*stride+HH, WWW*stride:WWW*stride+WW].shape
+          # print '==================='
+          dtheta[FF,:,:,:] += dout[mm,FF,HHH,WWW]*x_pad[mm, :, HHH*stride:HHH*stride+HH, WWW*stride:WWW*stride+WW]
   pass
+  dx = dx[:,:,pad:-pad, pad:-pad]
+  # print dx.shape
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
@@ -319,17 +344,10 @@ def max_pool_forward_naive(x, pool_param):
   HH = 1 + (H - max_H)/S
   WW = 1 + (W - max_W)/S
   out = np.zeros((m, F, HH, WW))
-  # print m, F, HH, WW
-  # print out.shape
   for mm in range(m):
     for FF in range(F):
       for HHH in range(HH):
         for WWW in range(WW):
-          # print "="
-          # print HHH*S, HHH*S+max_H
-          # print WWW*S, WWW*S+max_W
-          # print x[mm, FF, HHH*S:HHH*S+max_H, WWW*S:WWW*S+max_W]
-          # print mm,FF,HHH,WWW
           out[mm,FF,HHH,WWW] = np.max(x[mm, FF, HHH*S:HHH*S+max_H, WWW*S:WWW*S+max_W])
   pass
   #############################################################################
@@ -354,6 +372,21 @@ def max_pool_backward_naive(dout, cache):
   #############################################################################
   # TODO: Implement the max pooling backward pass                             #
   #############################################################################
+  m, F, H, W = cache[0].shape
+  max_H = cache[1]['pool_height']
+  max_W = cache[1]['pool_width']
+  S = cache[1]['stride']
+  HH = 1 + (H - max_H)/S
+  WW = 1 + (W - max_W)/S
+
+  dx = np.zeros((m, F, H, W))
+  for mm in range(m):
+    for FF in range(F):
+      for HHH in range(HH):
+        for WWW in range(WW):
+          sub_matrix = cache[0][mm, FF, HHH*S:HHH*S+max_H, WWW*S:WWW*S+max_W]
+          coordinate = np.unravel_index(sub_matrix.argmax(), sub_matrix.shape)
+          dx[mm, FF, HHH*S+coordinate[0], WWW*S+coordinate[1]] = dout[mm,FF,HHH,WWW]
   pass
   #############################################################################
   #                             END OF YOUR CODE                              #
