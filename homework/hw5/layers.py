@@ -233,7 +233,30 @@ def conv_forward_naive(x, theta, theta0, conv_param):
   # TODO: Implement the convolutional forward pass.                           #
   # Hint: you can use the function np.pad for padding.                        #
   #############################################################################
+  # print x.shape
+  # print theta.shape
+  # print theta0.shape
+  # print conv_param
+  m, C, H, W = x.shape
+  F, _, HH, WW = theta.shape
+  pad = conv_param['pad']
+  stride = conv_param['stride']
 
+  npad = ((0,0),(0,0),(pad,pad),(pad,pad))
+  x_pad = np.pad(x, npad, 'constant', constant_values=0)
+  # print x_pad.shape
+  out = np.zeros((m, F, 1 + (H + 2 * pad - HH) / stride, 1 + (W + 2 * pad - WW) / stride))
+  # print out.shape
+
+  for mm in range(m):
+    for FF in range(F):
+      for HHH in range(1 + (H + 2 * pad - HH) / stride):
+        for WWW in range(1 + (W + 2 * pad - WW) / stride):
+          # print x_pad[mm, :, HHH*stride:HHH*stride+HH, WWW*stride:WWW*stride+WW].shape
+          # print theta[FF].shape
+          out[mm,FF,HHH,WWW] = np.sum(x_pad[mm, :, HHH*stride:HHH*stride+HH, WWW*stride:WWW*stride+WW] * theta[FF])+theta0[FF]
+          # out[mm,FF,HHH,WWW] = np.dot(X, theta[FF]) + theta0[FF]
+  # np.pad()
   pass
   #############################################################################
   #                             END OF YOUR CODE                              #
@@ -286,7 +309,28 @@ def max_pool_forward_naive(x, pool_param):
   #############################################################################
   # TODO: Implement the max pooling forward pass                              #
   #############################################################################
+  # print x.shape
+  # print pool_param
+  m, F, H, W = x.shape
+  max_H = pool_param['pool_height']
+  max_W = pool_param['pool_width']
+  S = pool_param['stride']
 
+  HH = 1 + (H - max_H)/S
+  WW = 1 + (W - max_W)/S
+  out = np.zeros((m, F, HH, WW))
+  # print m, F, HH, WW
+  # print out.shape
+  for mm in range(m):
+    for FF in range(F):
+      for HHH in range(HH):
+        for WWW in range(WW):
+          # print "="
+          # print HHH*S, HHH*S+max_H
+          # print WWW*S, WWW*S+max_W
+          # print x[mm, FF, HHH*S:HHH*S+max_H, WWW*S:WWW*S+max_W]
+          # print mm,FF,HHH,WWW
+          out[mm,FF,HHH,WWW] = np.max(x[mm, FF, HHH*S:HHH*S+max_H, WWW*S:WWW*S+max_W])
   pass
   #############################################################################
   #                             END OF YOUR CODE                              #
@@ -310,7 +354,6 @@ def max_pool_backward_naive(dout, cache):
   #############################################################################
   # TODO: Implement the max pooling backward pass                             #
   #############################################################################
-
   pass
   #############################################################################
   #                             END OF YOUR CODE                              #
