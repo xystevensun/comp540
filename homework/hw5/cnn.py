@@ -48,7 +48,23 @@ class ThreeLayerConvNet(object):
     # 'theta3_0' for the weights and biases of the output affine layer.        #
     ############################################################################
     # about 12 lines of code
-
+    # conv - relu - 2x2 max pool - affine - relu - affine - softmax
+    conv_stride = 1
+    conv_pad = (filter_size - 1) / 2
+    pool_height = 2
+    pool_width = 2
+    pool_stride = 2
+    conv_H = 1 + (input_dim[1] + 2 * conv_pad - filter_size) / conv_stride
+    conv_W = 1 + (input_dim[2] + 2 * conv_pad - filter_size) / conv_stride
+    HH = 1 + (conv_H - pool_height)/pool_stride
+    WW = 1 + (conv_W - pool_width)/pool_stride
+    fc_dim = HH*WW*num_filters
+    self.params['theta1'] = np.random.normal(loc=0.0, scale=weight_scale, size=(num_filters, input_dim[0], filter_size, filter_size)).astype(dtype)
+    self.params['theta1_0'] = np.zeros((num_filters, ), dtype=dtype)
+    self.params['theta2'] = np.random.normal(loc=0.0, scale=weight_scale, size=(fc_dim, hidden_dim)).astype(dtype)
+    self.params['theta2_0'] = np.zeros((hidden_dim, ), dtype=dtype)
+    self.params['theta3'] = np.random.normal(loc=0.0, scale=weight_scale, size=(hidden_dim, num_classes)).astype(dtype)
+    self.params['theta3_0'] = np.zeros((num_classes, ), dtype=dtype)
     pass
     ############################################################################
     #                             END OF YOUR CODE                             #
@@ -82,8 +98,13 @@ class ThreeLayerConvNet(object):
     # variable.                                                                #
     ############################################################################
     # about 3 lines of code (use the helper functions in layer_utils.py)
-
-
+    
+    # def conv_relu_pool_forward(x, theta, theta0, conv_param, pool_param): -> return out, cache
+    # def affine_relu_forward(x, theta, theta0): -> return out, cache
+    # def affine_forward(x, theta, theta0): -> return out, cache
+    out1, cache1 = conv_relu_pool_forward(X, theta1, theta1_0, conv_param, pool_param)
+    out2, cache2 = affine_relu_forward(out1, theta2, theta2_0)
+    scores, cache3 = affine_forward(out2, theta3, theta3_0)
     pass
     ############################################################################
     #                             END OF YOUR CODE                             #
@@ -100,7 +121,21 @@ class ThreeLayerConvNet(object):
     # for self.params[k]. Don't forget to add L2 regularization!               #
     ############################################################################
     # about 12 lines of code
+    loss, dx = softmax_loss(scores, y)
+    reg_term = sum([np.sum(v**2) for k, v in self.params.iteritems()])
+    loss += self.reg * reg_term/2
 
+    dx, dtheta, dtheta0 = affine_backward(dx, cache3)
+    grads['theta3'] = dtheta + self.reg * self.params['theta3']
+    grads['theta3_0'] = dtheta0
+
+    dx, dtheta, dtheta0 = affine_relu_backward(dx, cache2)
+    grads['theta2'] = dtheta + self.reg * self.params['theta2']
+    grads['theta2_0'] = dtheta0
+
+    dx, dtheta, dtheta0 = conv_relu_pool_backward(dx, cache1)
+    grads['theta1'] = dtheta + self.reg * self.params['theta1']
+    grads['theta1_0'] = dtheta0
     pass
     ############################################################################
     #                             END OF YOUR CODE                             #
