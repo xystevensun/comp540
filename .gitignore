@@ -2,4 +2,5 @@
 **/.DS_Store
 **/.ipynb_checkpoints/
 **.pyc
+**.mat
 homework/hw2/knn/datasets/cifar-10-batches-py/

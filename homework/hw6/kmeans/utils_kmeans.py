@@ -22,11 +22,7 @@ def find_closest_centroids(X, centroids):
     #               closest to example i. Hence, it should be a value in the        #
     #               range 0..K-1                                                    #
     ################################################################################
-
-    
-    
-
-
+    idx = np.argmin(np.sum(((np.expand_dims(X.T, axis=0)-np.expand_dims(centroids, axis=2)) ** 2), axis=1), axis=0)
     ################################################################################
     #             END OF YOUR CODE                                                 #
     ################################################################################
@@ -55,9 +51,8 @@ def compute_centroids(X, idx, K):
     #               should contain the mean of the data points assigned to        #
     #               centroid i.                                                   #
     ###############################################################################
-
-   
-
+    for k in range(K):
+        centroids[k,:] = np.mean(X[idx==k], axis=0)
     ################################################################################
     #             END OF YOUR CODE                                                 #
     ################################################################################
@@ -74,9 +69,9 @@ def kmeans_init_centroids(X,K):
     #######################= YOUR CODE HERE ######################################
     #  Construct a random permutation of the examples and pick the first K items  #                                              
     ###############################################################################
-    
-    
-    
+    # print(X.shape)
+    index = np.random.permutation(X.shape[0])# np.linspace(0,X.shape[0]-1,num=X.shape[0]).astype(int)
+    centroids =  X[index[:K],:]
     ################################################################################
     #             END OF YOUR CODE                                                 #
     ################################################################################
