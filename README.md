@@ -2,8 +2,8 @@
 
 ## Before you looking at the code
 
-The first thing I want to say is that I appreciate anybody looking at this repository.
-You encountered my code because you want to search for solutions for your COMP540 homework.
+The first thing I want to say is that I appreciate everybody looking at this repository.
+You encountered my code because you want to search for solutions to your COMP540 homework.
 I know you must be a smart person or trying to be smart since you eager to stand on the shoulders of giants, which helps you see further.
 
 According to Rice's honor code, plagiarism is always prohibited and it is the most despicable and contemptible behavior in the world. 
